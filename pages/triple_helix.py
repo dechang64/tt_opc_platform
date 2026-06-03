@@ -1,33 +1,11 @@
 """三角色工作台 TripleHelix - 一人=三团队
 v0.3 - 接入真实LLM API（三Agent并行分析）
 """
+from llm_utils import llm_chat, parse_json_response
 import streamlit as st, json, subprocess, re, time
 from datetime import datetime
 
 # ─── LLM调用 ───
-def _llm_raw(system_prompt, user_prompt, max_retries=3):
-    for attempt in range(max_retries):
-        try:
-            result = subprocess.run(
-                ["z-ai", "chat", "-p", user_prompt, "-s", system_prompt],
-                capture_output=True, text=True, timeout=120
-            )
-            if result.returncode == 0:
-                output = result.stdout.strip()
-                lines = [l for l in output.split('\n') if l.strip() and not l.startswith('🚀')]
-                output = '\n'.join(lines)
-                if output:
-                    return output
-            if "429" in result.stderr or "Too many" in result.stderr:
-                time.sleep(30 * (attempt + 1))
-                continue
-        except subprocess.TimeoutExpired:
-            continue
-        except Exception:
-            time.sleep(5)
-            continue
-    return None
-
 # ─── 三个角色的System Prompt ───
 SYSTEM_PROMPTS = {
     "prof": """你是一位资深大学教授和技术评估专家，拥有20年科研经验，精通技术评估、学术价值判断和工程化可行性分析。
@@ -272,7 +250,7 @@ def render():
                     prompt = _build_prompt(name, desc, r, other_data)
 
                     st.write(f"调用LLM分析...")
-                    result = _llm_raw(SYSTEM_PROMPTS[r], prompt)
+                    result = llm_chat(SYSTEM_PROMPTS[r], prompt)
 
                     if result:
                         st.session_state.analysis_results[r] = result

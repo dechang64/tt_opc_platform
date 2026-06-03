@@ -1,5 +1,6 @@
 """联邦匹配 FedMatch - 跨校专利数据不出校"""
 import streamlit as st, random
+from llm_utils import llm_chat
 from datetime import datetime
 
 def _sim_match(need, field):

@@ -1,33 +1,11 @@
 """场景翻译 TechTranslator - 消除吸收能力门槛
 v0.3 - 接入真实LLM API（含重试+模拟降级）
 """
+from llm_utils import llm_chat, parse_json_response
 import streamlit as st, json, subprocess, re, time
 from datetime import datetime
 
 # ─── LLM调用（复用盲盒的同一套逻辑） ───
-def _llm_raw(system_prompt, user_prompt, max_retries=3):
-    for attempt in range(max_retries):
-        try:
-            result = subprocess.run(
-                ["z-ai", "chat", "-p", user_prompt, "-s", system_prompt],
-                capture_output=True, text=True, timeout=120
-            )
-            if result.returncode == 0:
-                output = result.stdout.strip()
-                lines = [l for l in output.split('\n') if l.strip() and not l.startswith('🚀')]
-                output = '\n'.join(lines)
-                if output:
-                    return output
-            if "429" in result.stderr or "Too many" in result.stderr:
-                time.sleep(30 * (attempt + 1))
-                continue
-        except subprocess.TimeoutExpired:
-            continue
-        except Exception:
-            time.sleep(5)
-            continue
-    return None
-
 # ─── System Prompt ───
 SYSTEM_PROMPT = """你是一位资深的技术转移专家，精通将学术/技术语言翻译为不同受众能理解的语言。
 
@@ -317,7 +295,7 @@ def render():
 
                 # 尝试LLM
                 with st.spinner(f"🤖 AI正在生成「{v}」..."):
-                    llm_output = _llm_raw(SYSTEM_PROMPT, prompt)
+                    llm_output = llm_chat(SYSTEM_PROMPT, prompt)
 
                 if llm_output:
                     results[v] = llm_output

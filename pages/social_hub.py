@@ -1,33 +1,11 @@
 """社交传播交易 SocialHub - 网络效应驱动的技术转移生态
 v0.3 - 社交网络 + 内容传播 + 交易撮合
 """
+from llm_utils import llm_chat, parse_json_response
 import streamlit as st, json, subprocess, re, time, random
 from datetime import datetime, timedelta
 
 # ─── LLM调用 ───
-def _llm_raw(system_prompt, user_prompt, max_retries=3):
-    for attempt in range(max_retries):
-        try:
-            result = subprocess.run(
-                ["z-ai", "chat", "-p", user_prompt, "-s", system_prompt],
-                capture_output=True, text=True, timeout=120
-            )
-            if result.returncode == 0:
-                output = result.stdout.strip()
-                lines = [l for l in output.split('\n') if l.strip() and not l.startswith('🚀')]
-                output = '\n'.join(lines)
-                if output:
-                    return output
-            if "429" in result.stderr or "Too many" in result.stderr:
-                time.sleep(30 * (attempt + 1))
-                continue
-        except subprocess.TimeoutExpired:
-            continue
-        except Exception:
-            time.sleep(5)
-            continue
-    return None
-
 # ─── 初始化Session State ───
 def _init_state():
     defaults = {
@@ -536,7 +514,7 @@ def _ai_enhance_post(content, post_type):
 3. 添加2-3个话题标签（#标签格式）
 4. 优化语言表达，使其更简洁有力
 5. 直接输出优化后的内容，不要解释"""
-    raw = _llm_raw(system, f"请优化以下内容：\n\n{content}")
+    raw = llm_chat(system, f"请优化以下内容：\n\n{content}")
     return raw if raw else content
 
 
@@ -551,5 +529,5 @@ def _ai_generate_post(input_text, gen_type):
     system = "你是一位技术转移领域的社交媒体运营专家。生成专业、有吸引力的社交动态。直接输出内容，不要解释。"
     key = gen_type[:1] if gen_type else "📊"
     prompt = prompts.get(key, prompts["📊"])
-    raw = _llm_raw(system, f"{prompt}\n\n素材：\n{input_text}")
+    raw = llm_chat(system, f"{prompt}\n\n素材：\n{input_text}")
     return raw

@@ -1,11 +1,12 @@
 """
-TT-OPC 智能运营平台 v0.3
+TT-OPC 智能运营平台 v0.4
 技术转移一人公司全链路AI工具
 基于24个经济学理论设计 · 8大使能功能
 """
 import streamlit as st
 import os, sys
 from datetime import datetime
+from llm_utils import init_session_state
 
 st.set_page_config(page_title="TT-OPC 智能运营平台", page_icon="🚀", layout="wide", initial_sidebar_state="expanded")
 
@@ -36,9 +37,7 @@ st.markdown("""<style>
 </style>""", unsafe_allow_html=True)
 
 # ─── Session State ───
-for k in ["assessments","matches","bps","contracts","flows"]:
-    if k not in st.session_state:
-        st.session_state[k] = []
+init_session_state()
 
 # ─── 侧边栏 ───
 with st.sidebar:
@@ -63,7 +62,7 @@ with st.sidebar:
     <a href="https://github.com/dechang64/AI-for-TT-OPC" target="_blank">📖 实操指南</a><br>
     <a href="https://book.qq.com/book-detail/58160523" target="_blank">📖 小说《OPC时代》</a>
     </div>""", unsafe_allow_html=True)
-    st.caption(f"v0.3 · {datetime.now().strftime('%Y-%m-%d')}")
+    st.caption(f"v0.4 · {datetime.now().strftime('%Y-%m-%d')}")
 
 # ─── 路由 ───
 modules = {

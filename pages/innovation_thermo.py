@@ -1,5 +1,6 @@
 """创新温度计 InnovationThermo - 实时测量AI渗透率"""
 import streamlit as st
+from llm_utils import llm_chat
 import random
 from datetime import datetime
 

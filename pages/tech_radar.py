@@ -1,5 +1,6 @@
 """技术雷达 TechRadar - 预测技术替代时机"""
 import streamlit as st
+from llm_utils import llm_chat
 import random
 from datetime import datetime
 

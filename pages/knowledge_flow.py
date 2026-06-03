@@ -1,5 +1,6 @@
 """知识图谱 KnowledgeFlow - 可视化知识流动"""
 import streamlit as st
+from llm_utils import llm_chat
 import random
 from datetime import datetime
 

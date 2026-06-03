@@ -4,37 +4,12 @@ v0.3 - 接入真实LLM API（含重试+模拟降级）
 import streamlit as st, json, subprocess, re, time, random
 from datetime import datetime
 
-# ─── LLM调用（含重试） ───
-def _llm_raw(system_prompt, user_prompt, max_retries=3):
-    """通过z-ai CLI调用LLM，含指数退避重试"""
-    for attempt in range(max_retries):
-        try:
-            result = subprocess.run(
-                ["z-ai", "chat", "-p", user_prompt, "-s", system_prompt],
-                capture_output=True, text=True, timeout=120
-            )
-            if result.returncode == 0:
-                output = result.stdout.strip()
-                # 跳过初始化信息行
-                lines = [l for l in output.split('\n') if l.strip() and not l.startswith('🚀')]
-                output = '\n'.join(lines)
-                if output:
-                    return output
-            # 429限流 → 等待后重试
-            if "429" in result.stderr or "Too many" in result.stderr:
-                wait = 30 * (attempt + 1)
-                time.sleep(wait)
-                continue
-        except subprocess.TimeoutExpired:
-            continue
-        except Exception:
-            time.sleep(5)
-            continue
-    return None
+from llm_utils import llm_chat, parse_json_response
+
 
 def _llm_json(system_prompt, user_prompt):
     """调用LLM并解析JSON响应"""
-    raw = _llm_raw(system_prompt, user_prompt)
+    raw = llm_chat(system_prompt, user_prompt)
     if not raw:
         return None
     # 尝试多种JSON提取方式
