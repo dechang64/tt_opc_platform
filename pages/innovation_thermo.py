@@ -11,6 +11,7 @@ def render():
         <div class="after">✅ 现在：平台即测量仪器，实时追踪AI渗透率、新任务创造、知识流动效率</div>
     </div>""", unsafe_allow_html=True)
     st.caption("📐 理论支撑：GPT渗透理论 + Acemoglu任务模型 + 新质生产力")
+    st.warning("⚠️ 以下数据为基于模型估算的演示数据，非实时统计结果。实际部署需接入科技部统计、专利数据库、企业调研等数据源。")
 
     # 核心指标
     st.markdown("### 🌡️ 创新温度总览")

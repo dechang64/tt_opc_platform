@@ -1,6 +1,12 @@
-# TT-OPC 智能运营平台 v0.3
+# TT-OPC 智能运营平台 v0.4（Streamlit版）
 
 > 技术转移一人公司全链路AI工具 · 基于24个经济学理论设计 · 8大使能功能
+
+> ⚠️ **功能冻结声明**：本Streamlit版为轻量演示/教学版，不再新增功能。
+> 完整全栈版本（React 19 + FastAPI + Docker）请前往：
+> **[suzhou-tt-research](https://github.com/dechang64/suzhou-tt-research)**
+>
+> 全栈版本包含：TT-OPC 8模块 + HW-OPC 9模块 + 双平台+三生态框架 + 国际案例 + 暗色模式 + Docker部署
 
 ## 🚀 快速开始
 
